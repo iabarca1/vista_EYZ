@@ -8,8 +8,6 @@ function App() {
     <div className="App">
       <h1>Datos de Productos</h1>
       <DataTable />
-      <h2>Visualización de Datos</h2>
-      <DataVisualization />
     </div>
   );
 }
