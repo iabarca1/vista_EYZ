@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/vista_EYZ/static/css/main.7c299056.css",
-    "main.js": "/vista_EYZ/static/js/main.d6ee7704.js",
+    "main.js": "/vista_EYZ/static/js/main.0bfedcaf.js",
     "index.html": "/vista_EYZ/index.html",
     "main.7c299056.css.map": "/vista_EYZ/static/css/main.7c299056.css.map",
-    "main.d6ee7704.js.map": "/vista_EYZ/static/js/main.d6ee7704.js.map"
+    "main.0bfedcaf.js.map": "/vista_EYZ/static/js/main.0bfedcaf.js.map"
   },
   "entrypoints": [
     "static/css/main.7c299056.css",
-    "static/js/main.d6ee7704.js"
+    "static/js/main.0bfedcaf.js"
   ]
 }
