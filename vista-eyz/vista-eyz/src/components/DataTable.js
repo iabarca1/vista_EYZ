@@ -121,7 +121,10 @@ const Styles = styled.div`
 `;
 
 const formatPercentage = (value) => (value == null || isNaN(value)) ? '' : `${(value * 100).toFixed(1)}%`;
-const formatCurrency = (value) => (value == null || isNaN(value)) ? '' : `$${value.toLocaleString()}`;
+const formatCurrency = (value) => {
+  if (value == null || isNaN(value)) return '';
+  return `$${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+};
 
 const getColumns = (sheet) => {
   switch (sheet) {
@@ -136,7 +139,6 @@ const getColumns = (sheet) => {
         { Header: 'Easy', accessor: 'Easy', Cell: ({ value }) => <span style={{ color: value < 0 ? 'red' : 'green' }}>{formatPercentage(value)}</span>, Filter: () => null },
         { Header: 'Construmart', accessor: 'Construmart', Cell: ({ value }) => <span style={{ color: value < 0 ? 'red' : 'green' }}>{formatPercentage(value)}</span>, Filter: () => null },
         { Header: 'Servimetal', accessor: 'Servimetal', Cell: ({ value }) => <span style={{ color: value < 0 ? 'red' : 'green' }}>{formatPercentage(value)}</span>, Filter: () => null },
-        
       ];
     case 'Küpfer':
       return [
@@ -326,7 +328,7 @@ const DataTable = () => {
             setPageSize(Number(e.target.value));
           }}
         >
-          {[10,20,30,40,50].map(pageSize => (
+          {[10, 20, 30, 40, 50].map(pageSize => (
             <option key={pageSize} value={pageSize}>
               Mostrar {pageSize}
             </option>
