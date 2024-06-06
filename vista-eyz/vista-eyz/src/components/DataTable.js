@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useTable, useFilters, usePagination, useSortBy } from 'react-table';
-import { CSVLink } from 'react-csv';
 import styled from '@emotion/styled';
+import * as XLSX from 'xlsx';
 import data from '../data_completa'; // Asegúrate de que la ruta sea correcta
 
 function DefaultColumnFilter({
@@ -174,169 +174,180 @@ const getColumns = (sheet) => {
         { Header: 'Precio Eyzaguirre', accessor: 'Precio Eyzaguirre', Cell: ({ value }) => formatCurrency(value), Filter: () => null },
         { Header: 'Precio Easy', accessor: 'Precio Easy', Cell: ({ value }) => formatCurrency(value), Filter: () => null },
         { Header: 'Dif $', accessor: 'Dif $', Cell: ({ value }) => formatCurrency(value), Filter: () => null },
-        { Header: 'Dif %', accessor: 'Dif %', Cell: ({ value }) => <span style={{ color: value < 0 ? 'red' : 'green' }}>{formatPercentage(value)}</span>, Filter: () => null }
+        { Header: 'Dif %', accessor: 'Dif %', Cell: ({ value }) => <span style={{ color: value < 0 ? 'red' : 'green' }}>{formatPercentage(value)}</span>, Filter: () => null}
       ];
-    case 'Construmart':
-      return [
-        { Header: 'Id_SKU', accessor: 'Id_SKU', Filter: DefaultColumnFilter },
-        { Header: 'Nombre_SKU_Eyzaguirre', accessor: 'Nombre_SKU', Filter: DefaultColumnFilter },
-        { Header: 'Precio Eyzaguirre', accessor: 'Precio Eyzaguirre', Cell: ({ value }) => formatCurrency(value), Filter: () => null },
-        { Header: 'Precio Construmart', accessor: 'Precio Construmart', Cell: ({ value }) => formatCurrency(value), Filter: () => null },
-        { Header: 'Dif $', accessor: 'Dif $', Cell: ({ value }) => formatCurrency(value), Filter: () => null },
-        { Header: 'Dif %', accessor: 'Dif %', Cell: ({ value }) => <span style={{ color: value < 0 ? 'red' : 'green' }}>{formatPercentage(value)}</span>, Filter: () => null }
-      ];
-    case 'Servimetal':
-      return [
-        { Header: 'Id_SKU', accessor: 'Id_SKU', Filter: DefaultColumnFilter },
-        { Header: 'Nombre_SKU_Eyzaguirre', accessor: 'Nombre_SKU', Filter: DefaultColumnFilter },
-        { Header: 'Precio Eyzaguirre', accessor: 'Precio Eyzaguirre', Cell: ({ value }) => formatCurrency(value), Filter: () => null },
-        { Header: 'Precio Servimetal', accessor: 'Precio Servimetal', Cell: ({ value }) => formatCurrency(value), Filter: () => null },
-        { Header: 'Dif $', accessor: 'Dif $', Cell: ({ value }) => formatCurrency(value), Filter: () => null },
-        { Header: 'Dif %', accessor: 'Dif %', Cell: ({ value }) => <span style={{ color: value < 0 ? 'red' : 'green' }}>{formatPercentage(value)}</span>, Filter: () => null }
-      ];
-    default:
-      return [];
-  }
-};
-
-const DataTable = () => {
-  const [selectedSheet, setSelectedSheet] = useState('Consolidado');
-
-  const columns = useMemo(() => getColumns(selectedSheet), [selectedSheet]);
-
-  const defaultColumn = useMemo(
-    () => ({
-      Filter: DefaultColumnFilter,
-    }),
-    []
-  );
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-    page,
-    canPreviousPage,
-    canNextPage,
-    pageOptions,
-    state: { pageIndex, pageSize },
-    gotoPage,
-    nextPage,
-    previousPage,
-    setPageSize,
-  } = useTable(
-    {
-      columns,
-      data: data[selectedSheet] || [],
-      defaultColumn,
-      initialState: { pageIndex: 0 },
-    },
-    useFilters,
-    useSortBy,
-    usePagination
-  );
-
-  return (
-    <Styles>
-      <div>
-        <label htmlFor="sheet-select">Selecciona una hoja: </label>
-        <select
-          id="sheet-select"
-          value={selectedSheet}
-          onChange={(e) => setSelectedSheet(e.target.value)}
-        >
-          {Object.keys(data).map(sheet => (
-            <option key={sheet} value={sheet}>{sheet}</option>
-          ))}
-        </select>
-      </div>
-      <CSVLink data={data[selectedSheet] || []} headers={columns.map(col => ({ label: col.Header, key: col.accessor }))} filename="table_data.csv">
-        <div className="export-button">
-          Exportar a CSV
+      case 'Construmart':
+        return [
+          { Header: 'Id_SKU', accessor: 'Id_SKU', Filter: DefaultColumnFilter },
+          { Header: 'Nombre_SKU_Eyzaguirre', accessor: 'Nombre_SKU', Filter: DefaultColumnFilter },
+          { Header: 'Precio Eyzaguirre', accessor: 'Precio Eyzaguirre', Cell: ({ value }) => formatCurrency(value), Filter: () => null },
+          { Header: 'Precio Construmart', accessor: 'Precio Construmart', Cell: ({ value }) => formatCurrency(value), Filter: () => null },
+          { Header: 'Dif $', accessor: 'Dif $', Cell: ({ value }) => formatCurrency(value), Filter: () => null },
+          { Header: 'Dif %', accessor: 'Dif %', Cell: ({ value }) => <span style={{ color: value < 0 ? 'red' : 'green' }}>{formatPercentage(value)}</span>, Filter: () => null }
+        ];
+      case 'Servimetal':
+        return [
+          { Header: 'Id_SKU', accessor: 'Id_SKU', Filter: DefaultColumnFilter },
+          { Header: 'Nombre_SKU_Eyzaguirre', accessor: 'Nombre_SKU', Filter: DefaultColumnFilter },
+          { Header: 'Precio Eyzaguirre', accessor: 'Precio Eyzaguirre', Cell: ({ value }) => formatCurrency(value), Filter: () => null },
+          { Header: 'Precio Servimetal', accessor: 'Precio Servimetal', Cell: ({ value }) => formatCurrency(value), Filter: () => null },
+          { Header: 'Dif $', accessor: 'Dif $', Cell: ({ value }) => formatCurrency(value), Filter: () => null },
+          { Header: 'Dif %', accessor: 'Dif %', Cell: ({ value }) => <span style={{ color: value < 0 ? 'red' : 'green' }}>{formatPercentage(value)}</span>, Filter: () => null }
+        ];
+      default:
+        return [];
+    }
+  };
+  
+  const DataTable = () => {
+    const [selectedSheet, setSelectedSheet] = useState('Consolidado');
+  
+    const columns = useMemo(() => getColumns(selectedSheet), [selectedSheet]);
+  
+    const defaultColumn = useMemo(
+      () => ({
+        Filter: DefaultColumnFilter,
+      }),
+      []
+    );
+  
+    const {
+      getTableProps,
+      getTableBodyProps,
+      headerGroups,
+      rows,
+      prepareRow,
+      page,
+      canPreviousPage,
+      canNextPage,
+      pageOptions,
+      state: { pageIndex, pageSize },
+      gotoPage,
+      nextPage,
+      previousPage,
+      setPageSize,
+    } = useTable(
+      {
+        columns,
+        data: data[selectedSheet] || [],
+        defaultColumn,
+        initialState: { pageIndex: 0 },
+      },
+      useFilters,
+      useSortBy,
+      usePagination
+    );
+  
+    const exportToExcel = () => {
+      const workbook = XLSX.utils.book_new();
+  
+      Object.keys(data).forEach(sheetName => {
+        const sheetData = data[sheetName];
+        const worksheet = XLSX.utils.json_to_sheet(sheetData);
+        XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+      });
+  
+      XLSX.writeFile(workbook, 'data.xlsx');
+    };
+  
+    return (
+      <Styles>
+        <div>
+          <label htmlFor="sheet-select">Selecciona una hoja: </label>
+          <select
+            id="sheet-select"
+            value={selectedSheet}
+            onChange={(e) => setSelectedSheet(e.target.value)}
+          >
+            {Object.keys(data).map(sheet => (
+              <option key={sheet} value={sheet}>{sheet}</option>
+            ))}
+          </select>
         </div>
-      </CSVLink>
-      <table {...getTableProps()}>
-        <thead>
-          {headerGroups.map(headerGroup => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                  {column.render('Header')}
-                  <span>
-                    {column.isSorted
-                      ? column.isSortedDesc
-                        ? ' 🔽'
-                        : ' 🔼'
-                      : ''}
-                  </span>
-                  <div>{column.canFilter ? column.render('Filter') : null}</div>
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {page.map(row => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map(cell => (
-                  <td {...cell.getCellProps()}>
-                    {cell.render('Cell')}
-                  </td>
+        <button className="export-button" onClick={exportToExcel}>
+          Exportar a Excel
+        </button>
+        <table {...getTableProps()}>
+          <thead>
+            {headerGroups.map(headerGroup => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map(column => (
+                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                    {column.render('Header')}
+                    <span>
+                      {column.isSorted
+                        ? column.isSortedDesc
+                          ? ' 🔽'
+                          : ' 🔼'
+                        : ''}
+                    </span>
+                    <div>{column.canFilter ? column.render('Filter') : null}</div>
+                  </th>
                 ))}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <div className="pagination">
-        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-          {'<<'}
-        </button>{' '}
-        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-          {'<'}
-        </button>{' '}
-        <button onClick={() => nextPage()} disabled={!canNextPage}>
-          {'>'}
-        </button>{' '}
-        <button onClick={() => gotoPage(pageOptions.length - 1)} disabled={!canNextPage}>
-          {'>>'}
-        </button>{' '}
-        <span>
-          Página{' '}
-          <strong>
-            {pageIndex + 1} de {pageOptions.length}
-          </strong>{' '}
-        </span>
-        <span>
-          | Ir a la página:{' '}
-          <input
-            type="number"
-            defaultValue={pageIndex + 1}
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {page.map(row => {
+              prepareRow(row);
+              return (
+                <tr {...row.getRowProps()}>
+                  {row.cells.map(cell => (
+                    <td {...cell.getCellProps()}>
+                      {cell.render('Cell')}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        <div className="pagination">
+          <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+            {'<<'}
+          </button>{' '}
+          <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+            {'<'}
+          </button>{' '}
+          <button onClick={() => nextPage()} disabled={!canNextPage}>
+            {'>'}
+          </button>{' '}
+          <button onClick={() => gotoPage(pageOptions.length - 1)} disabled={!canNextPage}>
+            {'>>'}
+          </button>{' '}
+          <span>
+            Página{' '}
+            <strong>
+              {pageIndex + 1} de {pageOptions.length}
+            </strong>{' '}
+          </span>
+          <span>
+            | Ir a la página:{' '}
+            <input
+              type="number"
+              defaultValue={pageIndex + 1}
+              onChange={e => {
+                const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                gotoPage(page);
+              }}
+            />
+          </span>{' '}
+          <select
+            value={pageSize}
             onChange={e => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0;
-              gotoPage(page);
+              setPageSize(Number(e.target.value));
             }}
-          />
-        </span>{' '}
-        <select
-          value={pageSize}
-          onChange={e => {
-            setPageSize(Number(e.target.value));
-          }}
-        >
-          {[10, 20, 30, 40, 50].map(pageSize => (
-            <option key={pageSize} value={pageSize}>
-              Mostrar {pageSize}
-            </option>
-          ))}
-        </select>
-      </div>
-    </Styles>
-  );
-};
-
-export default DataTable;
+          >
+            {[10, 20, 30, 40, 50].map(pageSize => (
+              <option key={pageSize} value={pageSize}>
+                Mostrar {pageSize}
+              </option>
+            ))}
+          </select>
+        </div>
+      </Styles>
+    );
+  };
+  
+  export default DataTable;
+  
